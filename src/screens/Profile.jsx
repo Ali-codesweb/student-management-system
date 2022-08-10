@@ -123,7 +123,7 @@ function Profile() {
           title: "Success",
           message: data.message,
         });
-        navigate(-1);
+        navigate(-1); 
       } else {
         showNotification({
           title: "Error",
