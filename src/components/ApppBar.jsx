@@ -26,7 +26,7 @@ function AppBar({children,setRole}) {
       header={
         <Header height={70} p="md" className="appbar bg-light">
           <div className="d-flex justify-content-between align-items-center">
-            <MediaQuery largerThan="sm" styles={{ display: "none" }}>
+            {/* <MediaQuery largerThan="xs" styles={{ display: "none" }}>
               <Burger
                 opened={opened}
                 onClick={() => setOpened((o) => !o)}
@@ -34,10 +34,10 @@ function AppBar({children,setRole}) {
                 color={theme.colors.gray[6]}
                 mr="xl"
               />
-            </MediaQuery>
+            </MediaQuery> */}
 
             <Text ml={10} className="font-weight-bold" color={"primary"}>
-              Manager
+              Pacifico
             </Text>
           
           </div>

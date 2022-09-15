@@ -8,33 +8,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 export default function HODAppshell({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const mockdata = [
-    {
-      icon: <i className="fa fa-chart-line"></i>,
-      label: "Dashboard",
-      link: "dashboard",
-    },
-    {
-      icon: <i className="fa fa-graduation-cap"></i>,
-      label: "Students",
-      link: "students",
-    },
-    {
-      icon: <i className="fa fa-comments"></i>,
-      label: "Feedbacks",
-      link: "feedback",
-    },
-    {
-      icon: <i className="fa fa-users"></i>,
-      label: "Staff",
-      link: "staff",
-    },
-    {
-      icon: <i className="fa fa-book"></i>,
-      label: "Subjects",
-      link: "dashboard",
-    },
-  ];
+ 
   const [active, setActive] = useState(0);
 
   React.useEffect(() => {
@@ -43,25 +17,26 @@ export default function HODAppshell({ children }) {
     }
   }, [location.pathname]);
 
-  const links = mockdata.map((link, index) => (
-    <Tooltip label={link.label} position="right" transitionDuration={0}>
-      <ActionIcon
-        onClick={() => {
-          navigate("/hod/" + link.link);
-          console.log(index);
-          setActive(index);
-        }}
-        size="xl"
-        mb={20}
-        radius="md"
-        variant={active == index ? "filled" : "outline"}
-        p={10}
-        color={"secondary"}
-      >
-        {link.icon}
-      </ActionIcon>
-    </Tooltip>
-  ));
+  const links = []
+  // mockdata.map((link, index) => (
+  //   <Tooltip label={link.label} position="right" transitionDuration={0}>
+  //     <ActionIcon
+  //       onClick={() => {
+  //         navigate("/hod/" + link.link);
+  //         console.log(index);
+  //         setActive(index);
+  //       }}
+  //       size="xl"
+  //       mb={20}
+  //       radius="md"
+  //       variant={active == index ? "filled" : "outline"}
+  //       p={10}
+  //       color={"secondary"}
+  //     >
+  //       {link.icon}
+  //     </ActionIcon>
+  //   </Tooltip>
+  // ));
 
   console.log("Beares ????");
   const theme = useMantineTheme();
@@ -96,7 +71,7 @@ export default function HODAppshell({ children }) {
         <Header height={70} p="md">
           <div className="d-flex justify-content-between align-items-center">
             <Text ml={10} className="font-weight-bold" color={"primary"}>
-              Manager
+              Pacifico
             </Text>
             <div className="d-flex">
               <Menu
@@ -108,7 +83,7 @@ export default function HODAppshell({ children }) {
                 <Menu.Target>
                   <Indicator mr={60}>
                     <ActionIcon>
-                      <i class="fas fa-bell"></i>
+                      <i className="fas fa-bell"></i>
                     </ActionIcon>
                   </Indicator>
                 </Menu.Target>
@@ -157,12 +132,12 @@ export default function HODAppshell({ children }) {
               >
                 <Menu.Target>
                   <ActionIcon mr={40}>
-                    <i class="fas fa-cog"></i>
+                    <i className="fas fa-cog"></i>
                   </ActionIcon>
                 </Menu.Target>
                 <Menu.Dropdown>
                   <Menu.Item
-                    icon={<i class="fa fa-user" aria-hidden="true"></i>}
+                    icon={<i className="fa fa-user" aria-hidden="true"></i>}
                     onClick={() => {
                       navigate("/profile");
                     }}
@@ -171,7 +146,7 @@ export default function HODAppshell({ children }) {
                   </Menu.Item>
                   <Menu.Item
                     color="red"
-                    icon={<i class="fas fa-sign-out-alt"></i>}
+                    icon={<i className="fas fa-sign-out-alt"></i>}
                     onClick={() => {
                       localStorage.removeItem("token");
                       showNotification({
@@ -215,7 +190,7 @@ export default function HODAppshell({ children }) {
 //       >
 //         <Group>
 //           <ThemeIcon>
-//             <i class="fa fa-chart-line" aria-hidden="true"></i>{" "}
+//             <i className="fa fa-chart-line" aria-hidden="true"></i>{" "}
 //           </ThemeIcon>
 //           <Text>Dashboard</Text>
 //         </Group>
@@ -227,7 +202,7 @@ export default function HODAppshell({ children }) {
 //       >
 //         <Group>
 //           <ThemeIcon>
-//             <i class="fa fa-graduation-cap" aria-hidden="true"></i>{" "}
+//             <i className="fa fa-graduation-cap" aria-hidden="true"></i>{" "}
 //           </ThemeIcon>
 //           <Text>Students</Text>
 //         </Group>
@@ -239,7 +214,7 @@ export default function HODAppshell({ children }) {
 //       >
 //         <Group>
 //           <ThemeIcon>
-//             <i class="fa fa-comments" aria-hidden="true"></i>{" "}
+//             <i className="fa fa-comments" aria-hidden="true"></i>{" "}
 //           </ThemeIcon>
 //           <Text>Feedback</Text>
 //         </Group>
@@ -251,7 +226,7 @@ export default function HODAppshell({ children }) {
 //       >
 //         <Group>
 //           <ThemeIcon>
-//             <i class="fa fa-users" aria-hidden="true"></i>{" "}
+//             <i className="fa fa-users" aria-hidden="true"></i>{" "}
 //           </ThemeIcon>
 //           <Text>Staff</Text>
 //         </Group>
@@ -263,7 +238,7 @@ export default function HODAppshell({ children }) {
 //       >
 //         <Group>
 //           <ThemeIcon>
-//             <i class="fa fa-book" aria-hidden="true"></i>{" "}
+//             <i className="fa fa-book" aria-hidden="true"></i>{" "}
 //           </ThemeIcon>
 //           <Text>Subjects</Text>
 //         </Group>

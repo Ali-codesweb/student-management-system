@@ -11,22 +11,24 @@ function UserContext(props) {
     profile_picture: "",
   });
   function getUserFromLocalStorage() {
-    return localStorage.getItem("token")
+    return localStorage.getItem("token") != undefined
       ? JSON.parse(localStorage.getItem("token"))
       : "";
-   
+    // if(localStorage.getItem("token")){
+    //   console.log(localStorage.getItem("token"))
+    // }else{
+    //   console.log('not found')
+    // }
+    //   return ""
   }
 
   React.useEffect(()=>{
     const token = getUserFromLocalStorage()
-    console.log(token)
-    setUser({...user,token})
+    // setUser({...user,token})
   },[])
 
   const authHeader = {
-    headers:{
       Authorization:`Bearer ` + getUserFromLocalStorage()
-    }
   }
 
   return (

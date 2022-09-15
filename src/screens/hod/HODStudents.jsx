@@ -12,13 +12,23 @@ import HODAppshell from "../../components/HODAppshell";
 import { MDBDataTableV5 } from "mdbreact";
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { customURL, romanize, UnauthorizedRedirect } from "../../constants";
+import {
+  axiosDelete,
+  axiosGet,
+  axiosPut,
+  customURL,
+  failedNotification,
+  romanize,
+  successNotification,
+  UnauthorizedRedirect,
+} from "../../constants/constants";
 import { UserState } from "../../context/UserContext";
 import EditButton from "./components/EditButton";
 import CustomDeleteModal from "../../components/CustomDeleteModal";
-import {  useForm } from "@mantine/form";
+import { useForm } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
 import { useNavigate } from "react-router-dom";
+import ScrollToTop from "../../components/ScrollToTop";
 
 function HODStudents({ name }) {
   const { user, getUserFromLocalStorage } = UserState();
@@ -66,41 +76,35 @@ function HODStudents({ name }) {
     rows: [],
   });
   const deleteStudent = async (id) => {
-    const { data } = await axios.delete(
-      customURL + "hod/get-students?id=" + id,
-      {
-        headers: {
-          Authorization: "Bearer " + getUserFromLocalStorage(),
-        },
-      }
-    );
-    console.log(data);
+    const data = await axiosDelete("hod/get-students?id=" + id);
+    getStudents();
   };
 
   const getStudents = async () => {
-    try {
-      editStudent.setFieldValue("students", []);
-      setVisible(true);
-      const { data } = await axios.get(customURL + "hod/get-students", {
-        headers: {
-          Authorization: "Bearer " + getUserFromLocalStorage(),
-        },
-      });
-      data.students.map((e) => {});
-      const rows = data.students.map((e, index) => {
-        console.log(e["roll_number"]);
+    setVisible(true);
+    const data = await axiosGet("hod/get-students");
+    if (data && data.status == 200) {
+      const rows = data.data.map((e, index) => {
         return {
           roll_num: e["roll_number"],
           name: e["name"],
           semester: romanize(e["semester"]),
           course: e["course"],
           edit: (
-            <EditButton type='Student' id={e["id"]} name={e["name"]} onClick={updateStudent} />
+            <EditButton
+              type="Student"
+              id={e["id"]}
+              name={e["name"]}
+              semester={e["semester"]}
+              onClick={updateStudent}
+            />
           ),
           remove: (
             <>
-              <EditButton type='Student'
+              <EditButton
+                type="Student"
                 remove
+                semester={e["semester"]}
                 onClick={() => {
                   deleteStudent(e["id"]).then((e) => {
                     getStudents();
@@ -113,45 +117,28 @@ function HODStudents({ name }) {
       });
 
       setDatatable({ ...datatable, rows });
-    } catch (error) {
-      showNotification({
-        message: "Please login again",
-        title: "Error",
-        color: "red",
-      });
+    } else {
       navigate("/login");
     }
     setVisible(false);
   };
   const updateStudent = async (id, form) => {
-    const { data } = await axios.put(
-      customURL + "hod/get-students?id=" + id,
-      {
-        first_name: form.firstName,
-        last_name: form.lastName,
-      },
-      {
-        headers: {
-          Authorization: "Bearer " + getUserFromLocalStorage(),
-        },
-      }
-    );
-    if (data.status == 200) {
-      showNotification({
-        title: "Success",
-        message: data.message,
-      });
+    const data = await axiosPut("hod/get-students?id=" + id, {
+      first_name: form.firstName,
+      last_name: form.lastName,
+      semester: form.semester,
+    });
+    console.log(data);
+    if (data && data.status == 200) {
+      successNotification(data.message);
     } else {
-      showNotification({
-        title: "Error",
-        message: data?.message ? data?.message : data?.details,
-      });
+      failedNotification(data?.message ? data?.message : "Failed");
     }
     getStudents();
   };
 
   React.useEffect(() => {
-    console.log('user effect claaed')
+    console.log("user effect claaed");
     getStudents();
   }, []);
 
@@ -177,6 +164,7 @@ function HODStudents({ name }) {
           data={datatable}
         />
       </Card>
+      <ScrollToTop />
     </>
   );
 }

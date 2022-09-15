@@ -4,14 +4,24 @@ import {
   Input,
   LoadingOverlay,
   Modal,
+  TextInput,
 } from "@mantine/core";
 import axios from "axios";
 import React from "react";
 import CustomDeleteModal from "../../../components/CustomDeleteModal";
-import { customURL } from "../../../constants";
+import { axiosGet, customURL } from "../../../constants/constants";
 import { MultiSelect } from "@mantine/core";
 
-function EditButton({ onClick, remove, id, name, type, staff, staffSubjects }) {
+function EditButton({
+  onClick,
+  remove,
+  id,
+  name,
+  type,
+  staff,
+  staffSubjects,
+  semester: studentSemester,
+}) {
   const [value, setValue] = React.useState([]);
 
   const [edit, setEdit] = React.useState(false);
@@ -20,9 +30,10 @@ function EditButton({ onClick, remove, id, name, type, staff, staffSubjects }) {
   const [firstName, setFirstName] = React.useState(name?.split(" ")[0]);
   const [lastName, setLastName] = React.useState(name?.split(" ")[1]);
   const [subjects, setSubjects] = React.useState([]);
+  const [semester, setSemester] = React.useState(studentSemester);
 
   const getSubjects = async () => {
-    const { data } = await axios.get(customURL + "subjects");
+    const  data  = await axiosGet("subjects");
     const subs = data.data.map((e) => {
       return {
         value: e.name,
@@ -33,7 +44,7 @@ function EditButton({ onClick, remove, id, name, type, staff, staffSubjects }) {
   };
   React.useEffect(() => {
     if (staff) {
-      setValue(staffSubjects)
+      setValue(staffSubjects);
       getSubjects();
     }
   }, []);
@@ -77,9 +88,9 @@ function EditButton({ onClick, remove, id, name, type, staff, staffSubjects }) {
           />
         </Input.Wrapper>
 
-        {staff && (
+        {staff ? (
           <MultiSelect
-          mt={10}
+            mt={10}
             value={value}
             onChange={(e) => {
               setValue(e);
@@ -89,17 +100,27 @@ function EditButton({ onClick, remove, id, name, type, staff, staffSubjects }) {
             label="Subjects"
             placeholder="Subjects"
           />
+        ) : (
+          <TextInput
+            type="number"
+            value={semester}
+            max={8}
+            min={1}
+            onChange={(e) => {
+              setSemester(e.target.value)
+            }}
+            label="Semester"
+            placeholder="semester"
+          />
         )}
 
         <Button
           onClick={async () => {
             setVisible(true);
-            if(staff){
-
-              await onClick(id, { firstName, lastName,value });
-            }else{
-
-              await onClick(id, { firstName, lastName });
+            if (staff) {
+              await onClick(id, { firstName, lastName, value });
+            } else {
+              await onClick(id, { firstName, lastName,semester });
             }
             setVisible(false);
             setEdit(!edit);

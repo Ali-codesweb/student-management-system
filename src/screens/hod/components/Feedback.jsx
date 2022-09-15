@@ -15,7 +15,7 @@ import {
 } from "@mantine/core";
 import CustomDeleteModal from "../../../components/CustomDeleteModal";
 import axios from "axios";
-import { customURL,romanize } from "../../../constants";
+import { customURL,romanize } from "../../../constants/constants";
 import { UserState } from "../../../context/UserContext";
 import { showNotification } from "@mantine/notifications";
 
@@ -76,7 +76,7 @@ function Feedback({ fb,getFeedbacks }) {
           mt={20}
           className="float-right"
           s
-          leftIcon={<i class="fas fa-reply"></i>}
+          leftIcon={<i className="fas fa-reply"></i>}
           color="primary"
           variant="filled"
           onClick={() => {
@@ -116,7 +116,7 @@ function Feedback({ fb,getFeedbacks }) {
                 </Text>
               </Grid.Col>
               <Grid.Col xs={2} lg={2} className="d-flex">
-                <i class="far fa-calendar mr-1"></i>
+                <i className="far fa-calendar mr-1"></i>
                 <Text size="xs">
                   {fb["posted_on"].split("-").reverse().join("-")}
                 </Text>
@@ -127,7 +127,7 @@ function Feedback({ fb,getFeedbacks }) {
             </Text>
             <div className="d-flex justify-content-between mt-4">
               <Button
-                leftIcon={<i class="fas fa-trash"></i>}
+                leftIcon={<i className="fas fa-trash"></i>}
                 color="red"
                 variant="white"
                 onClick={() => setOpened(true)}
@@ -135,7 +135,7 @@ function Feedback({ fb,getFeedbacks }) {
                 Delete
               </Button>
               <Button
-                leftIcon={<i class="fas fa-reply"></i>}
+                leftIcon={<i className="fas fa-reply"></i>}
                 color="secondary"
                 variant="white"
                 onClick={() => {

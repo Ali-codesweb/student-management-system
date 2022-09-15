@@ -1,12 +1,14 @@
-import React, { useState } from "react";
-import HODAppshell from "../../components/HODAppshell";
-import { MDBDataTableV5 } from "mdbreact";
 import { Card, LoadingOverlay, Text } from "@mantine/core";
-import { UserState } from "../../context/UserContext";
+import { MDBDataTableV5 } from "mdbreact";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { customURL } from "../../constants";
-import axios from "axios";
-import { showNotification } from "@mantine/notifications";
+import ScrollToTop from "../../components/ScrollToTop";
+import {
+  axiosDelete,
+  axiosGet, axiosPut, failedNotification,
+  successNotification
+} from "../../constants/constants";
+import { UserState } from "../../context/UserContext";
 import EditButton from "./components/EditButton";
 function HODStaff({ name }) {
   const { user, getUserFromLocalStorage } = UserState();
@@ -39,107 +41,60 @@ function HODStaff({ name }) {
   });
 
   const deleteStaff = async (id) => {
-    try {
-      const { data } = await axios.delete(customURL + "hod/staff?id=" + id, {
-        headers: {
-          Authorization: "Bearer " + getUserFromLocalStorage(),
-        },
-      });
-      if (data.status == 200) {
-        showNotification({
-          tite: "Success",
-          message: data.message,
-        });
-      }
-    } catch (error) {
-      showNotification({
-        tite: "Error",
-        message: error.message,
-        color: "red",
-      });
+    const data = await axiosDelete("hod/staff?id=" + id);
+    if (data.status == 200) {
+      successNotification(data.message);
     }
   };
-  const updateStaff = async(id,form)=>{
-    try {
-      const {data} = await axios.put(customURL+'hod/staff?id='+id,{
-        first_name:form.firstName,
-        last_name:form.lastName,
-        subjects:form.value
-      },{
-        headers: {
-          Authorization: "Bearer " + getUserFromLocalStorage(),
-        },
-      })
-      console.log(data)
-      if (data.status==200){
-        showNotification({
-          tite: "Success",
-          message: data.message,
-        });
-      }
-    } catch (error) {
-      showNotification({
-        tite: "Error",
-        message: error.message,
-        color: "red",
-      });
+  const updateStaff = async (id, form) => {
+    const data = await axiosPut("hod/staff?id=" + id, {
+      first_name: form.firstName,
+      last_name: form.lastName,
+      subjects: form.value,
+    });
+    if (data && data.status == 200) {
+      successNotification(data.message);
     }
-    getStaff()
-  }
+    getStaff();
+  };
   const getStaff = async () => {
-    setVisible(true)
-    try {
-      const { data } = await axios.get(customURL + "hod/staff", {
-        headers: {
-          Authorization: "Bearer " + getUserFromLocalStorage(),
-        },
-      });
-
-      if (data.status == 200) {
-        const rows = data.data.map((e) => {
-          return {
-            name: e["name"],
-            subject: e["subjects"].join(),
-            edit: (
-              <EditButton
+    setVisible(true);
+    const data = await axiosGet("hod/staff");
+    if (data.status == 200) {
+      const rows = data.data.map((e) => {
+        return {
+          name: e["name"],
+          subject: e["subjects"].join(),
+          edit: (
+            <EditButton
               staff
               staffSubjects={e["subjects"]}
+              type="Staff"
+              id={e["id"]}
+              name={e["name"]}
+              onClick={updateStaff}
+            />
+          ),
+          remove: (
+            <>
+              <EditButton
                 type="Staff"
-                id={e["id"]}
-                name={e["name"]}
-                onClick={updateStaff}
+                remove
+                onClick={async () => {
+                  await deleteStaff(e["id"]);
+                  await getStaff();
+                }}
               />
-            ),
-            remove: (
-              <>
-                <EditButton
-                  type="Staff"
-                  remove
-                  onClick={async() => {
-                    await deleteStaff(e["id"]);
-                    await getStaff()
-                  }}
-                />
-              </>
-            ),
-          };
-        });
-        setDatatable({ ...datatable, rows });
-      } else {
-        showNotification({
-          tite: "Error",
-          message: data.message,
-          color: "red",
-        });
-      }
-    } catch (error) {
-      showNotification({
-        tite: "Error",
-        message: error.message,
-        color: "red",
+            </>
+          ),
+        };
       });
+      setDatatable({ ...datatable, rows });
+    } else {
+      failedNotification(data.message);
     }
-    setVisible(false)
+
+    setVisible(false);
   };
   React.useEffect(() => {
     getStaff();
@@ -166,6 +121,7 @@ function HODStaff({ name }) {
           data={datatable}
         />
       </Card>
+      <ScrollToTop />
     </>
   );
 }

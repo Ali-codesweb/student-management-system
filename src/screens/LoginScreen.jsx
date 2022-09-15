@@ -9,13 +9,20 @@ import {
 } from "@mantine/core";
 import React, { useState } from "react";
 import AppBar from "../components/ApppBar";
-import { customURL } from "../constants";
+import {
+  axiosPost,
+  customURL,
+  failedNotification,
+  successNotification,
+} from "../constants/constants";
 import axios from "axios";
 import { showNotification } from "@mantine/notifications";
 import { useNavigate } from "react-router-dom";
 import { UserState } from "../context/UserContext";
+import { mainStore } from "../store";
 function LoginScreen() {
   const { setUser, user } = UserState();
+  const { setUser: saveUser } = mainStore();
   const [username, setUsername] = useState("");
   const [password, setpassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,38 +30,30 @@ function LoginScreen() {
   const login = async () => {
     try {
       setLoading(true);
-      const { data, status } = await axios.post(customURL + "login", {
-        username,
-        password,
-      });
-      
-      if (status >= 400) {
-       
-      } else {
-        await localStorage.setItem("token", JSON.stringify(data.token));
+      const data = await axiosPost("login", { username, password });
 
-        setUser({ ...user, ...data });
-        if (data.role == "Student") {
-          navigate("/student/dashboard");
-        }
-        if (data.role == "HOD") {
-          navigate("/hod/dashboard");
-        }
-        if (data.role == "Staff") {
-          navigate("/staff/dashboard");
-        }
+      await localStorage.setItem("token", JSON.stringify(data.token));
 
-        showNotification({
-          title: "Hi " + data.name,
-          message: "We hope you are a better " + data.role,
-        });
+      setUser({ ...user, ...data });
+      saveUser(data);
+      if (data.role === "Student") {
+        navigate("/student/dashboard");
       }
+      if (data.role === "HOD") {
+        navigate("/hod/dashboard");
+      }
+      if (data.role === "Staff") {
+        navigate("/staff/dashboard");
+      }
+      if (data.role === "Receptionist") {
+        navigate("/receptionist/enquiry");
+      }
+
+      successNotification(
+        "Hi " + data.name + ". We hope you are a better " + data.role
+      );
     } catch (error) {
-      showNotification({
-        title: "Error",
-        message: "Unauthorized",
-        color: "red",
-      });
+      failedNotification("Unauthorized");
     }
     setLoading(false);
   };
@@ -62,14 +61,31 @@ function LoginScreen() {
     <div>
       <AppBar>
         <LoadingOverlay visible={loading} />
+        <Text
+          weight={500}
+          p={15}
+          
+          align="center"
+          size="xl"
+          sx={(theme) => ({
+            boxShadow:theme.shadows.md,
+            borderRadius: theme.spacing.xs,
+            backgroundColor: theme.colors.cyan[0],
+          })}
+        >
+          Under Development
+        </Text>
         <Center>
           <form onSubmit={(e) => e.preventDefault()}>
             <Card
               mt={40}
               className="bg-light"
-              sx={{
+              sx={(theme) => ({
                 width: "500px",
-              }}
+                [`@media (max-width: ${theme.breakpoints.xs}px)`]: {
+                  width: "350px",
+                },
+              })}
               shadow="sm"
               p="lg"
             >
@@ -121,4 +137,4 @@ function LoginScreen() {
   );
 }
 
-export default LoginScreen;
+export default React.memo(LoginScreen);

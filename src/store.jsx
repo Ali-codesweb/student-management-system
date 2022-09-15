@@ -1,7 +1,13 @@
-import create from 'zustand'
+import create from "zustand";
 
-export const useBearStore = create((set) => ({
-  bears: 0,
-  increasePopulation: () => set((state) => ({ bears: state.bears + 1 })),
-  removeAllBears: () => set({ bears: 0 }),
-}))
+export const mainStore = create((set) => ({
+  user: {},
+  token: "",
+  setUser: (data) => set((state) => ({ user: data })),
+  getUserFromLocalStorage: () =>
+    set((state) => ({
+      token: localStorage.getItem("token")
+        ? JSON.parse(localStorage.getItem("token"))
+        : "",
+    })),
+}));

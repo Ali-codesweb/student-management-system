@@ -2,24 +2,26 @@ import {
   Button,
   Card,
   Center,
+  Grid,
   Image,
   Input,
   LoadingOverlay,
-  PasswordInput,
-  SimpleGrid,
-  Text,
+  PasswordInput, Text
 } from "@mantine/core";
-import Compressor from "compressorjs";
-import React, { useState } from "react";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
 import { useForm } from "@mantine/form";
-import axios from "axios";
-import { customURL } from "../constants";
-import { UserState } from "../context/UserContext";
 import { showNotification } from "@mantine/notifications";
+import axios from "axios";
+import Compressor from "compressorjs";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { customURL } from "../constants/constants";
+import { UserState } from "../context/UserContext";
+
+import ScrollToTop from "../components/ScrollToTop";
 function Profile() {
-  const [loading,setLoading] = React.useState(false)
+ 
+  const [loading, setLoading] = React.useState(false);
   const navigate = useNavigate();
   const { getUserFromLocalStorage } = UserState();
   const form = useForm({
@@ -28,7 +30,7 @@ function Profile() {
       first_name: "",
       last_name: "",
       email: "",
-      profile_picture: new File([],'image.jpg'),
+      profile_picture: new File([], "image.jpg"),
       role: "",
       roll_number: "",
       current_password: "",
@@ -38,14 +40,14 @@ function Profile() {
   });
 
   const fetchUserDetails = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       const { data } = await axios.get(customURL + "profile", {
         headers: {
           Authorization: "Bearer " + getUserFromLocalStorage(),
         },
       });
-      if (data.status == 200) {
+      if (data.status === 200) {
         const {
           username,
           department,
@@ -55,14 +57,15 @@ function Profile() {
           profile_picture,
           role,
           roll_number,
-          semester,
-          subjects,
+          // semester,
+          // subjects,
         } = data.data;
         fetch(profile_picture).then(async (response) => {
           const contentType = response.headers.get("content-type");
           const blob = await response.blob();
-          const file = new File([blob], "dbnra7fegc8zqec57wpp.png", { contentType });
-          console.log(file);
+          const file = new File([blob], "dbnra7fegc8zqec57wpp.png", {
+            contentType,
+          });
           form.setFieldValue("profile_picture", file);
         });
         form.setFieldValue("username", username);
@@ -80,16 +83,15 @@ function Profile() {
         color: "red",
       });
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   React.useEffect(() => {
     fetchUserDetails();
-  }, []);
+  },[]);
   const updateProfile = async () => {
-
-    if (form.values.new_password != "") {
-      if (form.values.new_password != form.values.confirm_new_password) {
+    if (form.values.new_password !== "") {
+      if (form.values.new_password !== form.values.confirm_new_password) {
         showNotification({
           title: "Error",
           message: "Please Confirm both new passwords are same",
@@ -98,7 +100,7 @@ function Profile() {
         return;
       }
     }
-    setLoading(true)
+    setLoading(true);
     try {
       const formData = new FormData();
       formData.append("file", form.values.profile_picture);
@@ -118,12 +120,12 @@ function Profile() {
           },
         }
       );
-      if (data.status == 200) {
+      if (data.status === 200) {
         showNotification({
           title: "Success",
           message: data.message,
         });
-        navigate(-1); 
+        navigate(-1);
       } else {
         showNotification({
           title: "Error",
@@ -138,7 +140,7 @@ function Profile() {
         color: "red",
       });
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   return (
@@ -146,127 +148,152 @@ function Profile() {
       <Center>
         <form onSubmit={(e) => e.preventDefault()}>
           <Card
+            mb={40}
             mt={40}
-            className="bg-light"
             sx={(theme) => ({
-              width: "500px",
+              width: "700px",
               [`@media (max-width: ${theme.breakpoints.xs}px)`]: {
                 width: "400px",
               },
             })}
-            shadow="sm"
+            shadow="lg"
             p="lg"
           >
             <LoadingOverlay visible={loading} />
             <Text weight={500} align="center" size="xl" color={"gray"}>
               Profile
             </Text>
-            <Input.Wrapper
-              mt={40}
-              id="username"
-              required
-              label="Username"
-              error={null}
-            >
-              <Input
-                {...form.getInputProps("username")}
-                id="username"
-                placeholder="Your username"
-              />
-            </Input.Wrapper>
-            <Input.Wrapper
-              mt={20}
-              id="first_name"
-              required
-              label="First Name"
-              error={null}
-            >
-              <Input
-                id="first_name"
-                {...form.getInputProps("first_name")}
-                placeholder="Your First Name"
-              />
-            </Input.Wrapper>
-            <Input.Wrapper
-              mt={20}
-              id="last_name"
-              required
-              label="Last Name"
-              error={null}
-            >
-              <Input
-                id="last_name"
-                {...form.getInputProps("last_name")}
-                placeholder="Your Last Name"
-              />
-            </Input.Wrapper>
-            <Input.Wrapper
-              mt={20}
-              id="email"
-              required
-              label="Email"
-              error={null}
-            >
-              <Input
-                id="email"
-                {...form.getInputProps("email")}
-                placeholder="Your Email"
-              />
-            </Input.Wrapper>
-            <Center mt={10}>
-              {/* {typeof form.values.profile_picture != "string" ? (
-                <Image
-                  height={200}
-                  width={200}
-                  src={form.values.profile_picture}
-                />
-              ) : ( */}
-                <Image
-                  height={200}
-                  width={200}
-                  src={URL.createObjectURL(form.values.profile_picture)}
-                />
-              {/* // )} */}
-            </Center>
-            <Dropzone
-              accept={[MIME_TYPES.png, MIME_TYPES.jpeg]}
-              mt={20}
-              onDrop={(e) => {
-                new Compressor(e[0], {
-                  quality: 0.3, // 0.6 can also be used, but its not recommended to go below.
-                  success: (compressedResult) => {
-                    form.setFieldValue("profile_picture", compressedResult);
-                  },
-                });
-              }}
-            >
-              <Text align="center">Image should be under 3 mb</Text>
-            </Dropzone>
+            <Grid align={"center"} justify={"center"}>
+              <Grid.Col xs={12} md={6}>
+                <Input.Wrapper
+                  mt={30}
+                  id="username"
+                  required
+                  label="Username"
+                  error={null}
+                >
+                  <Input
+                    {...form.getInputProps("username")}
+                    id="username"
+                    placeholder="Your username"
+                  />
+                </Input.Wrapper>
+              </Grid.Col>
+              <Grid.Col xs={12} md={6}>
+                <Input.Wrapper
+                  mt={30}
+                  id="first_name"
+                  required
+                  label="First Name"
+                  error={null}
+                >
+                  <Input
+                    id="first_name"
+                    {...form.getInputProps("first_name")}
+                    placeholder="Your First Name"
+                  />
+                </Input.Wrapper>
+              </Grid.Col>
+            </Grid>
+            <Grid>
+              <Grid.Col xs={12} md={6}>
+                <Input.Wrapper
+                  mt={20}
+                  id="last_name"
+                  required
+                  label="Last Name"
+                  error={null}
+                >
+                  <Input
+                    id="last_name"
+                    {...form.getInputProps("last_name")}
+                    placeholder="Your Last Name"
+                  />
+                </Input.Wrapper>
+              </Grid.Col>
+              <Grid.Col xs={12} md={6}>
+                <Input.Wrapper
+                  mt={20}
+                  id="email"
+                  required
+                  label="Email"
+                  error={null}
+                >
+                  <Input
+                    id="email"
+                    {...form.getInputProps("email")}
+                    placeholder="Your Email"
+                  />
+                </Input.Wrapper>
+              </Grid.Col>
+            </Grid>
 
-            {/* Role */}
-            <Input.Wrapper mt={20} id="role" required label="Role" error={null}>
-              <Input
-                id="role"
-                {...form.getInputProps("role")}
-                value={"HOD"}
-                disabled
-              />
-            </Input.Wrapper>
-            {/* Course / Department */}
-            <Input.Wrapper
-              mt={20}
-              id="department"
-              required
-              label="Department"
-              error={null}
-            >
-              <Input
-                {...form.getInputProps("department")}
-                id="department"
-                value={"CSE"}
-                disabled
-              />
-            </Input.Wrapper>
+            <Grid align="center" mt={20}>
+              <Grid.Col xs={12} md={6}>
+                <Center mt={20}>
+                  <Image
+                    withPlaceholder={loading}
+                    fit="contain"
+                    src={URL.createObjectURL(form.values.profile_picture)}
+                  />
+                </Center>
+              </Grid.Col>
+              <Grid.Col xs={12} md={6}>
+                <Dropzone
+                  sx={(theme) => ({
+                    height: "150px",
+                  })}
+                  accept={[MIME_TYPES.png, MIME_TYPES.jpeg]}
+                  onDrop={(e) => {
+                    new Compressor(e[0], {
+                      quality: 0.3,
+                      success: (compressedResult) => {
+                        form.setFieldValue("profile_picture", compressedResult);
+                      },
+                    });
+                  }}
+                >
+                  <Text align="center">Image should be under 3 mb</Text>
+                </Dropzone>
+              </Grid.Col>
+            </Grid>
+
+            <Grid>
+              <Grid.Col xs={12} md={6}>
+                {/* Role */}
+                <Input.Wrapper
+                  mt={20}
+                  id="role"
+                  required
+                  label="Role"
+                  error={null}
+                >
+                  <Input
+                    id="role"
+                    {...form.getInputProps("role")}
+                    value={"HOD"}
+                    disabled
+                  />
+                </Input.Wrapper>
+              </Grid.Col>
+              <Grid.Col xs={12} md={6}>
+                {/* Course / Department */}
+                <Input.Wrapper
+                  mt={20}
+                  id="department"
+                  required
+                  label="Department"
+                  error={null}
+                >
+                  <Input
+                    {...form.getInputProps("department")}
+                    id="department"
+                    value={"CSE"}
+                    disabled
+                  />
+                </Input.Wrapper>
+              </Grid.Col>
+            </Grid>
 
             <Text mt={30} align="center">
               Change you password
@@ -325,6 +352,7 @@ function Profile() {
           </Card>
         </form>
       </Center>
+      <ScrollToTop/>
     </div>
   );
 }

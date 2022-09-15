@@ -53,7 +53,7 @@ function StudentAppshell({ children }) {
             >
               <Group>
                 <ThemeIcon>
-                  <i class="fa fa-chart-line" aria-hidden="true"></i>{" "}
+                  <i className="fa fa-chart-line" aria-hidden="true"></i>{" "}
                 </ThemeIcon>
                 <Text>Dashboard</Text>
               </Group>
@@ -65,7 +65,7 @@ function StudentAppshell({ children }) {
             >
               <Group>
                 <ThemeIcon>
-                <i class="fas fa-bookmark"></i>
+                <i className="fas fa-bookmark"></i>
                 </ThemeIcon>
                 <Text>Leave</Text>
               </Group>
@@ -77,7 +77,7 @@ function StudentAppshell({ children }) {
             >
               <Group>
                 <ThemeIcon>
-                  <i class="fas fa-comment"></i>
+                  <i className="fas fa-comment"></i>
                 </ThemeIcon>
                 <Text>Feedback</Text>
               </Group>
@@ -99,7 +99,7 @@ function StudentAppshell({ children }) {
             </MediaQuery>
 
             <Text ml={10} className="font-weight-bold" color={"primary"}>
-              Manager
+              Pacifico
             </Text>
             <div>
               <Menu
@@ -108,7 +108,7 @@ function StudentAppshell({ children }) {
                 control={
                   <Indicator mr={60}>
                     <ActionIcon>
-                      <i class="fas fa-bell"></i>
+                      <i className="fas fa-bell"></i>
                     </ActionIcon>
                   </Indicator>
                 }
@@ -143,12 +143,12 @@ function StudentAppshell({ children }) {
                 placement="center"
                 control={
                   <ActionIcon mr={40}>
-                    <i class="fas fa-cog"></i>
+                    <i className="fas fa-cog"></i>
                   </ActionIcon>
                 }
               >
                 <Menu.Item
-                  icon={<i class="fa fa-user" aria-hidden="true"></i>}
+                  icon={<i className="fa fa-user" aria-hidden="true"></i>}
                   onClick={() => {
                     navigate("/profile");
                   }}
@@ -157,7 +157,7 @@ function StudentAppshell({ children }) {
                 </Menu.Item>
                 <Menu.Item
                   color="red"
-                  icon={<i class="fas fa-sign-out-alt"></i>}
+                  icon={<i className="fas fa-sign-out-alt"></i>}
                   onClick={() => {
                     localStorage.removeItem("token");
                     showNotification({

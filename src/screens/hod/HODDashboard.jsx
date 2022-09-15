@@ -3,6 +3,7 @@ import HODAppshell from "../../components/HODAppshell";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import { Card, Text } from "@mantine/core";
+import ScrollToTop from "../../components/ScrollToTop";
 function HODDashboard({ name }) {
   ChartJS.register(ArcElement);
   const data = {
@@ -40,6 +41,7 @@ function HODDashboard({ name }) {
         <Pie data={data} />
         <Text>Staff Attendance</Text>
       </Card>
+      <ScrollToTop/>
     </>
   );
 }

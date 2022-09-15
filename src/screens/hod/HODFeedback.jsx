@@ -16,8 +16,9 @@ import HODAppshell from "../../components/HODAppshell";
 import { UserState } from "../../context/UserContext";
 import Feedback from "./components/Feedback";
 import axios from "axios";
-import { customURL } from "../../constants";
+import { customURL } from "../../constants/constants";
 import { showNotification } from "@mantine/notifications";
+import ScrollToTop from "../../components/ScrollToTop";
 function HODFeedback({ name }) {
   const { getUserFromLocalStorage, authHeader } = UserState();
   const [feedbacks, setFeedbacks] = useState([]);
@@ -51,16 +52,18 @@ function HODFeedback({ name }) {
 
   return (
     <>
-     
       <Text size="xl" weight={600}>
         {name}
       </Text>
-      <Card radius={10} shadow={"sm"} p={20} mt={20}>
-      <LoadingOverlay visible={loading} />
+      <Card radius={10} shadow={"sm"} p={20} sx={(theme)=>({
+        minHeight:'600px'
+      })} mt={20}>
+        <LoadingOverlay visible={loading} />
         <SimpleGrid cols={3}>
           <div></div>
           <Select
-          placeholder="All"
+          dropdownPosition='bottom'
+            placeholder="All"
             clearable
             value={type}
             onChange={(e) => {
@@ -68,6 +71,7 @@ function HODFeedback({ name }) {
               setType(e);
               setSemester("");
             }}
+            zIndex={200}
             label="Type"
             data={[
               { value: "Student", label: "Student" },
@@ -77,7 +81,8 @@ function HODFeedback({ name }) {
           />
           {type == "Student" && (
             <Select
-            placeholder="All"
+            dropdownPosition='bottom'
+              placeholder="All"
               clearable
               value={semester}
               onChange={(e) => {
@@ -106,6 +111,7 @@ function HODFeedback({ name }) {
           <Text>No Feedbacks</Text>
         )}
       </Card>
+      <ScrollToTop />
     </>
   );
 }
